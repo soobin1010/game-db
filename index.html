@@ -86,6 +86,10 @@ h1{font-size:15px;font-weight:600;color:#1a1a1a;letter-spacing:-.3px;}
 .mv.pos{color:#1a7a4a;}.mv.hi{color:#1a56c4;}.mv.lo{color:#b56a00;}.mv.neg{color:#c0392b;}
 .ttl{font-size:11px;color:#999;line-height:1.5;overflow-wrap:break-word;}
 .arr{font-size:10px;color:#aaa;transition:transform .15s;flex-shrink:0;margin-top:2px;}
+.cmp-chk{font-size:10px;padding:2px 7px;border-radius:5px;border:1px solid #ddd;background:#fafafa;color:#888;cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .12s;}
+.cmp-chk:hover{background:#1a1a1a;color:#fff;border-color:#1a1a1a;}
+.cmp-chk.selected{background:#1a56c4;color:#fff;border-color:#1a56c4;}
+@media(max-width:390px){.cmp-chk{font-size:9px;padding:2px 5px;}}
 .cc.xp .arr{transform:rotate(180deg);}
 .dtl{display:none;border-top:1px solid #f0efe9;margin-top:9px;padding-top:9px;}
 .cc.xp .dtl{display:block;}
@@ -120,6 +124,38 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb;border-top:1px s
 .chart-bar{height:16px;border-radius:4px;transition:width .4s ease;min-width:2px;}
 .chart-val{font-size:10px;color:#666;margin-left:4px;white-space:nowrap;}
 @media(max-width:480px){.chart-label{width:80px;min-width:80px;font-size:10px;}}
+/* ── 기업 비교 ── */
+.cmp-bar{position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;color:#fff;z-index:900;transform:translateY(100%);transition:transform .22s ease;padding:10px 16px;}
+.cmp-bar.open{transform:translateY(0);}
+.cmp-bar-inner{max-width:700px;margin:0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.cmp-chips{display:flex;gap:6px;flex:1;flex-wrap:wrap;}
+.cmp-chip{display:inline-flex;align-items:center;gap:5px;background:#333;border-radius:20px;padding:4px 10px 4px 12px;font-size:12px;}
+.cmp-chip button{background:none;border:none;color:#aaa;cursor:pointer;font-size:14px;line-height:1;padding:0;}
+.cmp-chip button:hover{color:#fff;}
+.cmp-btn{padding:7px 16px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;border:none;white-space:nowrap;}
+.cmp-btn.run{background:#fff;color:#1a1a1a;}
+.cmp-btn.run:hover{background:#eee;}
+.cmp-btn.clear{background:transparent;color:#aaa;border:1px solid #555;}
+.cmp-btn.clear:hover{color:#fff;border-color:#888;}
+.cmp-hint{font-size:11px;color:#888;}
+/* 비교 모달 */
+.cmp-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1100;align-items:flex-start;justify-content:center;padding:20px 12px;box-sizing:border-box;overflow-y:auto;}
+.cmp-overlay.open{display:flex;}
+.cmp-modal{background:#fff;border-radius:16px;width:100%;max-width:860px;overflow:hidden;animation:slideUp .22s ease;flex-shrink:0;}
+.cmp-modal-head{padding:16px 20px 12px;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;}
+.cmp-modal-title{font-size:15px;font-weight:700;color:#1a1a1a;}
+.cmp-modal-close{background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;}
+.cmp-table-wrap{overflow-x:auto;}
+.cmp-table{width:100%;border-collapse:collapse;min-width:400px;}
+.cmp-table th{background:#f7f6f1;font-size:11px;font-weight:700;color:#555;padding:8px 12px;text-align:left;border-bottom:1px solid #eae9e4;white-space:nowrap;}
+.cmp-table th.co-head{text-align:center;min-width:160px;}
+.cmp-table td{font-size:12px;color:#333;padding:8px 12px;border-bottom:1px solid #f0efe9;vertical-align:top;line-height:1.5;}
+.cmp-table td.row-label{font-size:10.5px;color:#999;font-weight:700;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;background:#fafafa;}
+.cmp-table td.num{text-align:center;font-weight:600;}
+.cmp-table td.center{text-align:center;}
+.cmp-table .best{background:#edf7f1;}
+.cmp-table .worst{background:#fdf0ef;}
+@media(max-width:480px){.cmp-bar-inner{gap:6px;}.cmp-chip{font-size:11px;}.cmp-btn{font-size:11px;padding:6px 12px;}}
 /* ── 비밀번호 게이트 ── */
 .gate-overlay{display:flex;position:fixed;inset:0;background:#1a1a1a;z-index:2000;align-items:center;justify-content:center;}
 .gate-box{background:#fff;border-radius:16px;padding:36px 32px;width:100%;max-width:360px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,.3);}
@@ -611,7 +647,7 @@ function renderCards(){
           ${c.ip?'<span class="bd bip">자체IP</span>':''}
           ${c.iv?`<span class="bd ${ivcls(c.iv)}">${ivtxt(c.iv)}</span>`:''}
           <span class="bd ${macls(c.ma)}">${matxt(c.ma)}</span>
-          <span class="arr" style="display:none">▼</span>
+          <button class="cmp-chk" id="chk-${idx}" onclick="event.stopPropagation();toggleCompare(${idx})" title="비교에 추가">+비교</button>
         </div>
       </div>
       <div class="mtags">
@@ -693,9 +729,7 @@ function closeModal(){
 function handleOverlayClick(e){
   if(e.target===document.getElementById('modal-overlay')) closeModal();
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
-
-function setF(k,v){fs[k]=v;renderFilters();renderCards();}
+function setF(k,v){fs[k]=v;renderFilters();renderCards();if(chartOpen)renderChart();}
 function setSort(v){
   sortMode=v;
   document.querySelectorAll('.stab').forEach(el=>{
@@ -722,10 +756,13 @@ const CHART_COLORS={O:'#1a7a4a',T:'#b56a00',X:'#c0392b',N:'#888'};
 
 function renderChart(){
   const field=chartMode;
-  const data=DD.filter(c=>c[field]!=null&&c[field]>0)
+  const base=filtered(); // 현재 필터 상태 반영
+  const data=base.filter(c=>c[field]!=null&&c[field]>0)
     .sort((a,b)=>b[field]-a[field])
     .slice(0,12);
-  if(!data.length){document.getElementById('chart-bars').innerHTML='<div style="font-size:12px;color:#aaa;padding:8px 0">데이터 없음</div>';return;}
+  const totalLabel=`(${base.length}개사 중 데이터 있는 기업 기준)`;
+  document.querySelector('.chart-title').textContent=`📊 시총 / 매출 상위 기업 ${totalLabel}`;
+  if(!data.length){document.getElementById('chart-bars').innerHTML='<div style="font-size:12px;color:#aaa;padding:8px 0">해당 필터에 데이터 있는 기업 없음</div>';return;}
   const max=data[0][field];
   const bars=data.map(c=>{
     const pct=Math.round((c[field]/max)*100);
@@ -741,6 +778,9 @@ function renderChart(){
     </div>`;
   }).join('');
   document.getElementById('chart-bars').innerHTML=bars;
+  // 높이 재조정
+  const body=document.getElementById('chart-body');
+  if(chartOpen) body.style.maxHeight=body.scrollHeight+'px';
 }
 
 function toggleChart(){
@@ -770,6 +810,113 @@ function setChartMode(mode){
   body.style.maxHeight=body.scrollHeight+'px';
 }
 
+// ── 기업 비교 기능 ──
+const cmpSet=new Set(); // 비교할 기업 idx 집합 (최대 3개)
+
+function toggleCompare(idx){
+  if(cmpSet.has(idx)){
+    cmpSet.delete(idx);
+  } else {
+    if(cmpSet.size>=3){
+      alert('최대 3개까지 비교할 수 있습니다.');
+      return;
+    }
+    cmpSet.add(idx);
+  }
+  updateCmpBar();
+}
+
+function updateCmpBar(){
+  const bar=document.getElementById('cmp-bar');
+  const chips=document.getElementById('cmp-chips');
+  const hint=document.getElementById('cmp-hint');
+  const runBtn=document.getElementById('cmp-run-btn');
+  // 모든 체크 버튼 상태 갱신
+  document.querySelectorAll('.cmp-chk').forEach(el=>{
+    const i=parseInt(el.id.replace('chk-',''));
+    el.classList.toggle('selected',cmpSet.has(i));
+    el.textContent=cmpSet.has(i)?'✓ 선택됨':'+비교';
+  });
+  if(cmpSet.size===0){bar.classList.remove('open');return;}
+  bar.classList.add('open');
+  chips.innerHTML=[...cmpSet].map(i=>{
+    const name=(DD[i].nk||DD[i].n);
+    return `<span class="cmp-chip">${name}<button onclick="toggleCompare(${i})">×</button></span>`;
+  }).join('');
+  hint.textContent=cmpSet.size<2?`${cmpSet.size}개 선택 (최소 2개 필요)`:`${cmpSet.size}개 선택`;
+  runBtn.disabled=cmpSet.size<2;
+  runBtn.style.opacity=cmpSet.size<2?'.5':'1';
+}
+
+function clearCompare(){
+  cmpSet.clear();
+  updateCmpBar();
+}
+
+function openCompare(){
+  if(cmpSet.size<2)return;
+  const cos=[...cmpSet].map(i=>DD[i]);
+  const ROWS=[
+    {label:'국가',     fn:c=>c.ct||'—'},
+    {label:'업종',     fn:c=>c.bz||'—'},
+    {label:'장르',     fn:c=>gntxt(c.gn)},
+    {label:'M&A 접근', fn:c=>matxt(c.ma), cls:c=>`bd ${macls(c.ma)}`},
+    {label:'딜 형태',  fn:c=>c.iv?ivtxt(c.iv):'—'},
+    {label:'시가총액', fn:c=>fy(c.mk), num:true, best:'max'},
+    {label:'연간매출', fn:c=>fy(c.rv), num:true, best:'max'},
+    {label:'영업이익률',fn:c=>fm(c.mg), num:true, best:'max', raw:c=>c.mg},
+    {label:'직원수',   fn:c=>c.emp!=null?c.emp+'명':'—', num:true},
+    {label:'대표이사', fn:c=>c.rep||'미파악'},
+    {label:'자체 IP',  fn:c=>c.ip?'✅ 보유':'—'},
+    {label:'주요 타이틀', fn:c=>c.tt||'—'},
+    {label:'기업 특징', fn:c=>c.ch||'—'},
+    {label:'장점',     fn:c=>c.pr||'—'},
+    {label:'단점/리스크', fn:c=>c.cn||'—'},
+    {label:'주주구조', fn:c=>c.sh||'—'},
+    {label:'M&A 판단근거', fn:c=>c.mr||'—'},
+  ];
+  // 헤더
+  const head='<tr><th>항목</th>'+cos.map(c=>`<th class="co-head">${c.nk||c.n}<br><span style="font-size:10px;font-weight:400;color:#999">${c.n}</span></th>`).join('')+'</tr>';
+  // 행
+  const body=ROWS.map(row=>{
+    const vals=cos.map(c=>row.fn(c));
+    // 숫자 비교 하이라이트
+    let bestIdx=-1,worstIdx=-1;
+    if(row.best&&row.raw){
+      const raws=cos.map(c=>row.raw(c));
+      const validRaws=raws.filter(v=>v!=null);
+      if(validRaws.length>=2){
+        const maxV=Math.max(...validRaws),minV=Math.min(...validRaws);
+        if(maxV!==minV){
+          bestIdx=row.best==='max'?raws.indexOf(maxV):raws.indexOf(minV);
+          worstIdx=row.best==='max'?raws.indexOf(minV):raws.indexOf(maxV);
+        }
+      }
+    }
+    const cells=cos.map((c,i)=>{
+      const hl=i===bestIdx?' best':i===worstIdx?' worst':'';
+      const cls=row.cls?`<span class="${row.cls(c)}" style="font-size:11px">${vals[i]}</span>`:vals[i];
+      return `<td class="${row.num?'num':''}${hl}">${cls}</td>`;
+    }).join('');
+    return `<tr><td class="row-label">${row.label}</td>${cells}</tr>`;
+  }).join('');
+  document.getElementById('cmp-table').innerHTML=head+body;
+  document.getElementById('cmp-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+
+function closeCompare(){
+  document.getElementById('cmp-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function handleCmpOverlay(e){
+  if(e.target===document.getElementById('cmp-overlay')) closeCompare();
+}
+// ESC 키로 비교 모달도 닫기
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'){closeModal();closeCompare();}
+});
+
 // URL 앵커 처리 (#co-N 형식)
 (function(){
   const hash=location.hash;
@@ -791,6 +938,29 @@ function setChartMode(mode){
   }
 })();
 </script>
+
+<!-- 기업 비교 바 (하단 고정) -->
+<div class="cmp-bar" id="cmp-bar">
+  <div class="cmp-bar-inner">
+    <div class="cmp-chips" id="cmp-chips"></div>
+    <span class="cmp-hint" id="cmp-hint"></span>
+    <button class="cmp-btn run" id="cmp-run-btn" onclick="openCompare()">비교하기</button>
+    <button class="cmp-btn clear" onclick="clearCompare()">초기화</button>
+  </div>
+</div>
+
+<!-- 기업 비교 모달 -->
+<div class="cmp-overlay" id="cmp-overlay" onclick="handleCmpOverlay(event)">
+  <div class="cmp-modal" id="cmp-modal">
+    <div class="cmp-modal-head">
+      <span class="cmp-modal-title">기업 비교</span>
+      <button class="cmp-modal-close" onclick="closeCompare()">✕</button>
+    </div>
+    <div class="cmp-table-wrap">
+      <table class="cmp-table" id="cmp-table"></table>
+    </div>
+  </div>
+</div>
 
 <!-- 기업 상세 모달 -->
 <div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
