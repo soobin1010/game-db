@@ -62,7 +62,8 @@ h1{font-size:15px;font-weight:600;color:#1a1a1a;letter-spacing:-.3px;}
 .ctb{font-size:12px;color:#aaa;margin-bottom:10px;}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:9px;}
 .cc{background:#fff;border:1px solid #eae9e4;border-radius:12px;padding:13px;cursor:pointer;transition:border-color .12s;}
-.cc:hover,.cc:active{border-color:#bbb;}
+.cc:hover{border-color:#bbb;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.cc:active{border-color:#999;transform:scale(.99);}
 .cc.xp{border-color:#555;}
 
 .ch{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
@@ -102,12 +103,44 @@ h1{font-size:15px;font-weight:600;color:#1a1a1a;letter-spacing:-.3px;}
 .anchor-hl{animation:hlpulse 1.5s ease;}
 @keyframes hlpulse{0%{box-shadow:0 0 0 0 rgba(26,86,196,.4);}70%{box-shadow:0 0 0 8px rgba(26,86,196,0);}100%{box-shadow:none;}}
 footer{text-align:center;padding:20px;font-size:11px;color:#bbb;border-top:1px solid #eae9e4;margin-top:20px;}
+/* ── 모달 ── */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+@media(min-width:600px){.modal-overlay{align-items:center;}}
+.modal-box{background:#fff;width:100%;max-width:600px;max-height:92vh;border-radius:18px 18px 0 0;overflow:hidden;display:flex;flex-direction:column;animation:slideUp .22s ease;}
+@media(min-width:600px){.modal-box{border-radius:16px;max-height:86vh;}}
+@keyframes slideUp{from{transform:translateY(30px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-head{padding:16px 18px 12px;border-bottom:1px solid #f0efe9;flex-shrink:0;}
+.modal-title-row{display:flex;justify-content:space-between;align-items:flex-start;}
+.modal-name{font-size:17px;font-weight:700;color:#1a1a1a;line-height:1.3;}
+.modal-name-jp{font-size:12px;color:#999;margin-top:2px;}
+.modal-close{background:none;border:none;font-size:20px;color:#aaa;cursor:pointer;padding:0 0 0 12px;line-height:1;flex-shrink:0;}
+.modal-close:hover{color:#333;}
+.modal-badges{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.modal-body{overflow-y:auto;padding:14px 18px 24px;flex:1;}
+.modal-fin{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px;}
+.modal-met{background:#f7f6f1;border-radius:8px;padding:8px 10px;}
+.modal-ml{font-size:10px;color:#aaa;margin-bottom:3px;}
+.modal-mv{font-size:13px;font-weight:700;color:#1a1a1a;}
+.modal-mv.pos{color:#1a7a4a;}.modal-mv.hi{color:#1a56c4;}.modal-mv.lo{color:#b56a00;}.modal-mv.neg{color:#c0392b;}
+.modal-section{margin-bottom:12px;}
+.modal-sl{font-size:10px;color:#aaa;text-transform:uppercase;letter-spacing:.4px;font-weight:700;margin-bottom:4px;}
+.modal-sv{font-size:12.5px;color:#333;line-height:1.65;overflow-wrap:break-word;}
+.modal-sv.pros{color:#1a7a4a;}.modal-sv.cons{color:#c0392b;}
+.modal-reason{padding:8px 11px;border-radius:8px;font-size:12.5px;line-height:1.65;margin-bottom:12px;}
+.modal-reason.g{background:#edf7f1;color:#1a5c38;border-left:3px solid #1a7a4a;}
+.modal-reason.w{background:#fffbf0;color:#7a4a00;border-left:3px solid #b56a00;}
+.modal-reason.r{background:#fdf0ef;color:#8a2020;border-left:3px solid #c0392b;}
+.modal-reason.d{background:#f7f6f1;color:#555;border-left:3px solid #bbb;}
+.modal-fix{font-size:10.5px;background:#fffbe6;border:1px solid #ffe566;border-radius:6px;padding:5px 9px;margin-bottom:10px;color:#7a5a00;}
+.modal-tt{font-size:12px;color:#777;line-height:1.55;background:#fafafa;border-radius:7px;padding:7px 10px;margin-bottom:12px;}
+@media(max-width:390px){.modal-fin{grid-template-columns:repeat(2,1fr);}.modal-name{font-size:15px;}}
 @media(max-width:900px){.strow{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:700px){.strow{grid-template-columns:repeat(3,1fr);}.cgrid{grid-template-columns:1fr;}.wrap{padding:12px;}.criteria-grid{grid-template-columns:1fr 1fr;}}
 @media(max-width:480px){header{padding:10px 14px;}.hbadge{display:none;}.wrap{padding:8px;}.strow{grid-template-columns:repeat(2,1fr);}.mets{grid-template-columns:repeat(2,1fr);}.criteria-grid{grid-template-columns:1fr;}.ctrl{padding:10px 12px;}.ctrl-top{flex-wrap:wrap;}#sort-sel{width:100%;margin-top:6px;}.stv{font-size:17px;}#srch{font-size:16px;min-height:44px;}#sort-sel{min-height:44px;font-size:15px;}.stab{padding:7px 12px;min-height:40px;font-size:11px;}.fp{padding:7px 11px;min-height:40px;font-size:11px;}.ctb{gap:8px 6px;}.fgrp{gap:5px;}}
 @media(max-width:390px){.wrap{padding:6px 8px;}.strow{grid-template-columns:1fr 1fr;}.strow .stcard:last-child:nth-child(odd){grid-column:span 2;}.mets{grid-template-columns:1fr 1fr;}.cc{padding:11px 10px;}.cn{font-size:12.5px;}.cn-jp{font-size:10px;}.dl{font-size:9px;}.stl{font-size:9px;}.stv{font-size:16px;}h1{font-size:13.5px;}header .hbadge{display:none;}.fp{font-size:10px;padding:6px 9px;}.stab{font-size:10px;padding:6px 9px;}}
 @media print{
-  header,.criteria-panel,.ctrl,.ctb{display:none!important;}
+  header,.criteria-panel,.ctrl,.ctb,.modal-overlay{display:none!important;}
   body{background:#fff;}
   .wrap{padding:8px;}
   .strow{grid-template-columns:repeat(6,1fr);margin-bottom:10px;}
@@ -125,7 +158,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb;border-top:1px s
 <header>
   <div class="header-inner">
     <h1>🎮 일본 게임업계 기업 인텔리전스 v3</h1>
-    <span class="hbadge">원본+숏리스트+신규발굴 통합 86사 · M&A 판단 근거 포함 · 2025–2026 IR 기준</span>
+    <span class="hbadge">서브/비서브/판권/AI기술 통합 100사 · M&A 판단 근거 포함 · 2025–2026 IR 기준</span>
   </div>
 </header>
 <div class="wrap">
@@ -294,7 +327,7 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb;border-top:1px s
 </noscript>
 
 </div>
-<footer>Nexon Japan — 기업 조사 자료 | 원본 45사 + 숏리스트 19사 + 데이터수정 7사 + 신규발굴 15사 = 총 86사 | 설계서: 설계서_v2.0.md</footer>
+<footer>Nexon Japan — 기업 조사 자료 | 서브 45사 + 비서브 41사 + 판권 8사 + AI기술 6사 = 총 100사 | 설계서: 설계서_v2.0.md</footer>
 
 <script>
 
@@ -488,14 +521,14 @@ function renderCards(){
     const nameHtml=c.nk
       ? `${c.nk}<span class="cn-jp">${c.n}</span>`
       : c.n;
-    return `<div class="cc" id="co-${idx}" onclick="tog('co-${idx}')">
+    return `<div class="cc" id="co-${idx}" onclick="openModal(${idx})">
       <div class="ch">
         <div class="cn">${nameHtml}</div>
         <div class="bds">
           ${c.ip?'<span class="bd bip">자체IP</span>':''}
           ${c.iv?`<span class="bd ${ivcls(c.iv)}">${ivtxt(c.iv)}</span>`:''}
           <span class="bd ${macls(c.ma)}">${matxt(c.ma)}</span>
-          <span class="arr">▼</span>
+          <span class="arr" style="display:none">▼</span>
         </div>
       </div>
       <div class="mtags">
@@ -524,6 +557,61 @@ function renderCards(){
 }
 
 function tog(id){document.getElementById(id).classList.toggle('xp');}
+
+function openModal(idx){
+  const c=DD[idx];
+  if(!c)return;
+  // 이름
+  document.getElementById('m-name').textContent=c.nk||c.n;
+  const jp=document.getElementById('m-name-jp');
+  jp.textContent=c.nk?c.n:'';
+  // 배지
+  const bd=document.getElementById('m-badges');
+  let bh='';
+  bh+=`<span class="bd bi">${c.ct}</span>`;
+  bh+=`<span class="bd bn">${c.bz}</span>`;
+  bh+=`<span class="bd ${gncls(c.gn)}">${gntxt(c.gn)}</span>`;
+  if(c.ip) bh+='<span class="bd bip">자체IP</span>';
+  if(c.iv) bh+=`<span class="bd ${ivcls(c.iv)}">${ivtxt(c.iv)}</span>`;
+  bh+=`<span class="bd ${macls(c.ma)}">${matxt(c.ma)}</span>`;
+  if(c.emp!=null) bh+=`<span class="bd bn">${c.emp}명</span>`;
+  bd.innerHTML=bh;
+  // 수정메모
+  const fix=document.getElementById('m-fix');
+  fix.innerHTML=c.fix?`<div class="modal-fix">📌 데이터 수정: ${c.fix}</div>`:'';
+  // 재무
+  const fin=document.getElementById('m-fin');
+  fin.innerHTML=`
+    <div class="modal-met"><div class="modal-ml">시가총액</div><div class="modal-mv">${fy(c.mk)}</div></div>
+    <div class="modal-met"><div class="modal-ml">연간매출</div><div class="modal-mv">${fy(c.rv)}</div></div>
+    <div class="modal-met"><div class="modal-ml">영업이익률</div><div class="modal-mv ${mgcls(c.mg)}">${fm(c.mg)}</div></div>`;
+  // 주요 타이틀
+  const tt=document.getElementById('m-tt');
+  tt.innerHTML=c.tt?`<div class="modal-tt">🎮 ${c.tt}</div>`:'';
+  // M&A 판단근거
+  const reason=document.getElementById('m-reason');
+  reason.innerHTML=`<div class="modal-reason ${mrcls(c.ma)}"><strong>M&amp;A 판단 근거</strong><br>${c.mr||'(작성 예정)'}</div>`;
+  // 상세 정보
+  let dh='';
+  if(c.rep) dh+=`<div class="modal-section"><div class="modal-sl">대표이사</div><div class="modal-sv">${c.rep}</div></div>`;
+  dh+=`<div class="modal-section"><div class="modal-sl">기업 특징</div><div class="modal-sv">${c.ch}</div></div>`;
+  if(c.pr) dh+=`<div class="modal-section"><div class="modal-sl">장점 (M&amp;A / 퍼블리싱)</div><div class="modal-sv pros">${c.pr}</div></div>`;
+  if(c.cn) dh+=`<div class="modal-section"><div class="modal-sl">단점 / 리스크</div><div class="modal-sv cons">${c.cn}</div></div>`;
+  dh+=`<div class="modal-section"><div class="modal-sl">주주구조</div><div class="modal-sv">${c.sh}</div></div>`;
+  document.getElementById('m-details').innerHTML=dh;
+  // 열기
+  document.getElementById('modal-overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function handleOverlayClick(e){
+  if(e.target===document.getElementById('modal-overlay')) closeModal();
+}
+document.addEventListener('keydown',e=>{if(e.key==='Escape') closeModal();});
+
 function setF(k,v){fs[k]=v;renderFilters();renderCards();}
 function setSort(v){
   sortMode=v;
@@ -564,5 +652,28 @@ renderCards();
   }
 })();
 </script>
+
+<!-- 기업 상세 모달 -->
+<div class="modal-overlay" id="modal-overlay" onclick="handleOverlayClick(event)">
+  <div class="modal-box" id="modal-box">
+    <div class="modal-head">
+      <div class="modal-title-row">
+        <div>
+          <div class="modal-name" id="m-name"></div>
+          <div class="modal-name-jp" id="m-name-jp"></div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-badges" id="m-badges"></div>
+    </div>
+    <div class="modal-body">
+      <div id="m-fix"></div>
+      <div class="modal-fin" id="m-fin"></div>
+      <div id="m-tt"></div>
+      <div id="m-reason"></div>
+      <div id="m-details"></div>
+    </div>
+  </div>
+</div>
 </body>
 </html>
