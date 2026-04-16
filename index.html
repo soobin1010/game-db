@@ -203,6 +203,25 @@ footer{text-align:center;padding:20px;font-size:11px;color:#bbb;border-top:1px s
 .modal-link-btn.site{background:#f0f4ff;color:#1a56c4;border-color:#c0d0f0;}
 .modal-link-btn.stock{background:#edf7f1;color:#1a7a4a;border-color:#b3dfc5;}
 .modal-tt{font-size:12px;color:#777;line-height:1.55;background:#fafafa;border-radius:7px;padding:7px 10px;margin-bottom:12px;}
+/* ── 모달 탭 ── */
+.modal-tabs{display:flex;gap:0;border-bottom:1px solid #eae9e4;margin:0 -18px 14px;padding:0 18px;}
+.modal-tab{font-size:12px;font-weight:600;padding:8px 14px;color:#aaa;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .12s,border-color .12s;white-space:nowrap;}
+.modal-tab.on{color:#1a1a1a;border-bottom-color:#1a1a1a;}
+.modal-tab-pane{display:none;}
+.modal-tab-pane.on{display:block;}
+/* ── 컨택 이력 ── */
+.ct-empty{font-size:12px;color:#bbb;text-align:center;padding:24px 0;}
+.ct-item{border:1px solid #eae9e4;border-radius:10px;padding:11px 13px;margin-bottom:8px;}
+.ct-header{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.ct-date{font-size:11px;font-weight:700;color:#555;}
+.ct-badge{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:600;}
+.ct-badge.meeting{background:#e8f0fb;color:#1a56c4;}
+.ct-badge.dining{background:#fdf3e0;color:#8a5a00;}
+.ct-persons{display:flex;flex-direction:column;gap:4px;}
+.ct-person{display:flex;align-items:baseline;gap:6px;}
+.ct-name{font-size:12.5px;font-weight:600;color:#1a1a1a;}
+.ct-role{font-size:11px;color:#999;}
+.ct-memo{font-size:11.5px;color:#666;margin-top:6px;padding-top:6px;border-top:1px solid #f0efe9;line-height:1.55;}
 @media(max-width:390px){.modal-fin{grid-template-columns:repeat(2,1fr);}.modal-name{font-size:15px;}}
 @media(max-width:900px){.strow{grid-template-columns:repeat(4,1fr);}}
 @media(max-width:700px){.strow{grid-template-columns:repeat(3,1fr);}.cgrid{grid-template-columns:1fr;}.wrap{padding:12px;}.criteria-grid{grid-template-columns:1fr 1fr;}}
@@ -742,6 +761,38 @@ const COMPANY_LINKS={
   'ポケットRD':{url:'https://www.pocketrd.co.jp/'},
 };
 
+// ── 컨택 이력 ──
+const CONTACTS=[
+  {dt:'2025-10-27',n:'カプコン',type:'meeting',attendees:[
+    {name:'Haruhiro Tsujimoto',role:'CEO'},
+    {name:'Yoshinori Ishida',role:'Director'}
+  ],memo:''},
+  {dt:'2025-10-27',n:'グリー',type:'meeting',attendees:[
+    {name:'Yoshikazu Tanaka',role:'Chairman & CEO'},
+    {name:'Sanku Shino',role:'CSO'},
+    {name:'Toshiki Oya',role:'CFO'}
+  ],memo:''},
+  {dt:'2025-10-27',n:'コーエーテクモゲームス',type:'dining',attendees:[
+    {name:'Hisashi Koinuma',role:'CEO'},
+    {name:'Jihee Baik',role:'Marketing Department'}
+  ],memo:''},
+  {dt:'2025-10-28',n:'バンダイナムコエンタ',type:'meeting',attendees:[
+    {name:'Yuji Asako',role:'CEO'},
+    {name:'Takashi Tsuji',role:'CFO'},
+    {name:'Kentaro Kichiji',role:'Head of IR'}
+  ],memo:''},
+  {dt:'2025-10-28',n:'セガ',type:'meeting',attendees:[
+    {name:'Haruki Satomi',role:'CEO (Sega Sammy)'},
+    {name:'Shuji Utsumi',role:'CEO (Sega)'}
+  ],memo:''},
+  {dt:'2026-01-14',n:'COVER',type:'meeting',attendees:[
+    {name:'Ueda',role:'COO'}
+  ],memo:''},
+  {dt:'2026-02-20',n:'セガ',type:'dining',attendees:[
+    {name:'Segawa',role:''}
+  ],memo:''},
+];
+
 // 중복 제거
 const seen={};const DD=[];
 for(let i=D.length-1;i>=0;i--){if(!seen[D[i].n]){seen[D[i].n]=true;DD.unshift(D[i]);}}
@@ -908,9 +959,29 @@ function openModal(idx){
   if(c.cn) dh+=`<div class="modal-section"><div class="modal-sl">단점 / 리스크</div><div class="modal-sv cons">${c.cn}</div></div>`;
   dh+=`<div class="modal-section"><div class="modal-sl">주주구조</div><div class="modal-sv">${c.sh}</div></div>`;
   document.getElementById('m-details').innerHTML=dh;
+  // 컨택 이력
+  renderContactTab(c.n);
+  // 탭 초기화 (기본: 기업정보)
+  switchModalTab('info');
   // 열기
   document.getElementById('modal-overlay').classList.add('open');
   document.body.style.overflow='hidden';
+}
+function switchModalTab(tab){
+  document.querySelectorAll('.modal-tab').forEach(el=>el.classList.toggle('on',el.dataset.tab===tab));
+  document.querySelectorAll('.modal-tab-pane').forEach(el=>el.classList.toggle('on',el.dataset.pane===tab));
+}
+function renderContactTab(companyN){
+  const list=CONTACTS.filter(c=>c.n===companyN).sort((a,b)=>b.dt.localeCompare(a.dt));
+  const el=document.getElementById('m-contacts');
+  if(!list.length){el.innerHTML='<div class="ct-empty">컨택 이력 없음</div>';return;}
+  el.innerHTML=list.map(c=>{
+    const typeLabel=c.type==='dining'?'다이닝':'미팅';
+    const typeCls=c.type==='dining'?'dining':'meeting';
+    const persons=c.attendees.map(p=>`<div class="ct-person"><span class="ct-name">${p.name}</span>${p.role?`<span class="ct-role">${p.role}</span>`:''}</div>`).join('');
+    const memo=c.memo?`<div class="ct-memo">${c.memo}</div>`:'';
+    return `<div class="ct-item"><div class="ct-header"><span class="ct-date">${c.dt}</span><span class="ct-badge ${typeCls}">${typeLabel}</span></div><div class="ct-persons">${persons}</div>${memo}</div>`;
+  }).join('');
 }
 function closeModal(){
   document.getElementById('modal-overlay').classList.remove('open');
@@ -1166,12 +1237,21 @@ document.addEventListener('keydown',e=>{
       <div class="modal-badges" id="m-badges"></div>
     </div>
     <div class="modal-body">
-      <div id="m-fix"></div>
-      <div id="m-links"></div>
-      <div class="modal-fin" id="m-fin"></div>
-      <div id="m-tt"></div>
-      <div id="m-reason"></div>
-      <div id="m-details"></div>
+      <div class="modal-tabs">
+        <span class="modal-tab on" data-tab="info" onclick="switchModalTab('info')">기업 정보</span>
+        <span class="modal-tab" data-tab="contact" onclick="switchModalTab('contact')">컨택 이력</span>
+      </div>
+      <div class="modal-tab-pane on" data-pane="info">
+        <div id="m-fix"></div>
+        <div id="m-links"></div>
+        <div class="modal-fin" id="m-fin"></div>
+        <div id="m-tt"></div>
+        <div id="m-reason"></div>
+        <div id="m-details"></div>
+      </div>
+      <div class="modal-tab-pane" data-pane="contact">
+        <div id="m-contacts"></div>
+      </div>
     </div>
   </div>
 </div>
